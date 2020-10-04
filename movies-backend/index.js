@@ -15,6 +15,7 @@ const authRouter = require('./routes/authRoute')
 const userRouter = require('./routes/userRoute')
 const movieRouter = require('./routes/movieRoute')
 const roleRouter = require('./routes/roleRoute')
+const ratingRouter = require('./routes/ratingRoute')
 
 app.use(cors())
 app.use(morgan('dev'))
@@ -30,10 +31,12 @@ app.use(api, authRouter)
 app.use(api, userRouter)
 app.use(api, movieRouter)
 app.use(api, roleRouter)
+app.use(api, ratingRouter)
 
-const connectDB = require('./middlewares/db')
-connectDB.connect()
+const mongoConnection = require('./middlewares/mongodb-connector')
+mongoConnection.connect()
+// const sqlConnection = require('./middlewares/mysql-connector')
 const { PORT } = process.env;
 app.listen(PORT, () => {
-  console.log(`Server is running on port ${PORT}`)
+	console.log(`Server is running on port ${PORT}`)
 })

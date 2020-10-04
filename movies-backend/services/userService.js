@@ -1,5 +1,5 @@
 const md5 = require('md5');
-const User = require('../models/user');
+const User = require('../models/mongo/user');
 const CustomError = require('../utils/customError');
 const roleService = require('./roleService');
 

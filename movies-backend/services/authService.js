@@ -1,11 +1,11 @@
 const jwt = require('jsonwebtoken');
 const md5 = require('md5');
-const User = require('../models/user');
-const Role = require('../models/role');
+const User = require('../models/mongo/user');
+const Role = require('../models/mongo/role');
 const CustomError = require('../utils/customError');
 
 const { JWT_SECRET_KEY } = process.env;
-const EXPIRES_TIME = '1 day';
+const EXPIRES_TIME = '1h';
 
 async function verifyToken(accessToken) {
 	try {

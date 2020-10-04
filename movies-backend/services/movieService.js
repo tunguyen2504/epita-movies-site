@@ -1,4 +1,4 @@
-const Movie = require('../models/movie');
+const Movie = require('../models/mongo/movie');
 const CustomError = require('../utils/customError');
 
 async function addMovie(newMovie) {

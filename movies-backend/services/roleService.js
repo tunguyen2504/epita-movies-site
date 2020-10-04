@@ -1,4 +1,4 @@
-const Role = require('../models/role');
+const Role = require('../models/mongo/role');
 const CustomError = require('../utils/customError');
 
 async function createRole(name) {
