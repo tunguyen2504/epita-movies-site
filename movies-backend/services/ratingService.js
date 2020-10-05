@@ -33,15 +33,11 @@ async function calculateAndUpdateRating(movieId) {
 		if (err) throw err;
 		const { count, rows } = await Rating.findAndCountAll({ where: { movieId } });
 		var finalRating = 0;
-		console.log(count);
 		rows.map(row => {
 			const rating = row.get({ plain: true });
 			finalRating += rating.rate;
-			console.log(rating);
-			console.log(finalRating);
 		})
 		finalRating = (finalRating / count).toFixed(2);
-		console.log(finalRating);
 		const movie = await Movie.findByIdAndUpdate(movieId, { rating: finalRating }, { new: true });
 		return { movie }
 	} catch (error) {

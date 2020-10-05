@@ -1,8 +1,8 @@
-const ratingService = require('../services/ratingService');
+const seenMovieService = require('../services/seenMovieService');
 const authService = require('../services/authService');
 const CustomError = require('../utils/customError');
 
-async function rateMovie(req, res) {
+async function addSeenTime(req, res) {
 	try {
 		const accessToken = req.headers.authorization;
 		const { error: errorAuth, data } = await authService.verifyToken(
@@ -14,28 +14,24 @@ async function rateMovie(req, res) {
 			throw new CustomError('Request body are empty.', 400);
 		}
 		req.checkBody('movieId', 'movieId is empty.').notEmpty();
-		req.checkBody('rate', 'rate must be number.').isDecimal();
 		const errors = req.validationErrors();
 		if (errors) {
 			const message = errors.map(error => error.msg).join('. ');
 			throw new CustomError(message, 400);
 		}
 		const userId = data.user_id;
-		const { movieId, rate } = req.body;
-		if (rate > 10 || rate < 0) {
-			throw new CustomError('Rate point is invalid.', 400);
-		}
-		const { error, rating } = await ratingService.rateMovie(userId, movieId, rate);
+		const { movieId } = req.body;
+		const { error, seenMovie } = await seenMovieService.addSeenTime(userId, movieId);
 		if (error) throw error;
 		res.status(201);
-		return res.send({ results: rating });
+		return res.send({ results: seenMovie });
 	} catch (error) {
 		res.status(error.statusCode || 500);
 		return res.send({ error: error.message });
 	}
 }
 
-async function calculateAndUpdateRating(req, res) {
+async function countTotalViewsByMovieId(req, res) {
 	try {
 		const accessToken = req.headers.authorization;
 		const { error: errorAuth, data } = await authService.verifyToken(
@@ -44,13 +40,34 @@ async function calculateAndUpdateRating(req, res) {
 		if (errorAuth) return res.status(403).send({ error: errorAuth.message });
 
 		const { movieId } = req.params;
-		const { error, movie } = await ratingService.calculateAndUpdateRating(movieId);
+		const { error, result } = await seenMovieService.countTotalViewsByMovieId(movieId);
 		if (error) throw error;
-		return res.send({ results: movie });
+		return res.send({ results: result });
 	} catch (error) {
 		res.status(error.statusCode || 500);
 		return res.send({ error: error.message });
 	}
 }
 
-module.exports = { rateMovie, calculateAndUpdateRating }
+async function getRecentWatchedMoviesByUserId(req, res) {
+	try {
+		const accessToken = req.headers.authorization;
+		const { error: errorAuth, data } = await authService.verifyToken(
+			accessToken,
+		);
+		if (errorAuth) return res.status(403).send({ error: errorAuth.message });
+		const userId = data.user_id;
+		const { error, results } = await seenMovieService.getRecentWatchedMoviesByUserId(userId);
+		if (error) throw error;
+		return res.send({ results });
+	} catch (error) {
+		res.status(error.statusCode || 500);
+		return res.send({ error: error.message });
+	}
+}
+
+module.exports = {
+	addSeenTime,
+	countTotalViewsByMovieId,
+	getRecentWatchedMoviesByUserId
+}
