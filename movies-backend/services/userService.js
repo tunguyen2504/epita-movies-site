@@ -6,6 +6,7 @@ const roleService = require('./roleService');
 async function getUserById(userId) {
 	try {
 		const user = await User.findById(userId);
+		if (!user) throw new CustomError('User is not found', 404);
 		return { user: user.toJSON() };
 	} catch (error) {
 		return { error };
@@ -22,7 +23,7 @@ async function updateUserInfo(userId, updateProps) {
 		if (isUserExist) throw new CustomError('Email is already registered.', 409);
 
 		const updatedUser = await User.findByIdAndUpdate(userId, updateProps, { new: true });
-		return { updatedUser };
+		return { updatedUser: updatedUser.toJSON() };
 	} catch (error) {
 		return { error };
 	}

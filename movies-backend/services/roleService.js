@@ -15,6 +15,7 @@ async function createRole(name) {
 async function getRoleById(roleId) {
 	try {
 		const role = await Role.findById(roleId);
+		if (!role) throw new CustomError('Role is not found.', 404);
 		return { role };
 	} catch (error) {
 		return { error };

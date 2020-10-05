@@ -1,4 +1,4 @@
-const rateService = require('../services/ratingService');
+const ratingService = require('../services/ratingService');
 const authService = require('../services/authService');
 const CustomError = require('../utils/customError');
 
@@ -22,7 +22,10 @@ async function rateMovie(req, res) {
 		}
 		const userId = data.user_id;
 		const { movieId, rate } = req.body;
-		const { error, rating } = await rateService.rateMovie(userId, movieId, rate);
+		if (rate > 10 || rate < 0) {
+			throw new CustomError('Rate point is invalid.', 400);
+		}
+		const { error, rating } = await ratingService.rateMovie(userId, movieId, rate);
 		if (error) throw error;
 		res.status(201);
 		return res.send({ results: rating });
@@ -30,6 +33,24 @@ async function rateMovie(req, res) {
 		res.status(error.statusCode || 500);
 		return res.send({ error: error.message });
 	}
-};
+}
 
-module.exports = { rateMovie }
+async function calculateAndUpdateRating(req, res) {
+	try {
+		const accessToken = req.headers.authorization;
+		const { error: errorAuth, data } = await authService.verifyToken(
+			accessToken,
+		);
+		if (errorAuth) return res.status(403).send({ error: errorAuth.message });
+
+		const { movieId } = req.params;
+		const { error, movie } = await ratingService.calculateAndUpdateRating(movieId);
+		if (error) throw error;
+		return res.send({ results: movie });
+	} catch (error) {
+		res.status(error.statusCode || 500);
+		return res.send({ error: error.message });
+	}
+}
+
+module.exports = { rateMovie, calculateAndUpdateRating }

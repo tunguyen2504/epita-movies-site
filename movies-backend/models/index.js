@@ -7,6 +7,7 @@ const basename = path.basename(__filename);
 const env = process.env.NODE_ENV || 'development';
 const config = require(__dirname + '/../config/config')[env];
 const db = {};
+const { exec } = require('child_process');
 
 let sequelize;
 if (config.use_env_variable) {
@@ -16,21 +17,21 @@ if (config.use_env_variable) {
 }
 
 try {
-	sequelize.query("CREATE DATABASE IF NOT EXISTS " + process.env.MYSQL_DB + ";").then(() => {
+	sequelize.query("CREATE DATABASE IF NOT EXISTS " + process.env.MYSQL_DB + ";").then(async () => {
 		// code to run after successful creation.
-		// if (error) throw error;
-		// await new Promise((resolve, reject) => {
-		// 	const migrate = exec(
-		// 		'sequelize db:migrate',
-		// 		{ env: process.env },
-		// 		err => (err ? reject(err) : resolve())
-		// 	);
+		await new Promise((resolve, reject) => {
+			const migrate = exec(
+				'npx sequelize-cli db:migrate',
+				{ env: process.env },
+				err => (err ? reject(err) : resolve())
+			);
 
-		// 	// Forward stdout+stderr to this process
-		// 	migrate.stdout.pipe(process.stdout);
-		// 	migrate.stderr.pipe(process.stderr);
-		// });
+			// Forward stdout+stderr to this process
+			migrate.stdout.pipe(process.stdout);
+			migrate.stderr.pipe(process.stderr);
+		});
 	});
+	sequelize = new Sequelize(config.database, config.username, config.password, { dialect: "mysql" });
 } catch (error) {
 	console.log(error);
 }
@@ -59,7 +60,6 @@ const mongoose = require('mongoose');
 const Counter = require('./mongo/counter');
 const User = require('./mongo/user');
 const Role = require('./mongo/role');
-const { exec } = require('child_process');
 
 (async () => {
 	const counters = [
@@ -74,9 +74,9 @@ const { exec } = require('child_process');
 	];
 
 	const admin = {
-		email: 'superadmin@epitamovies.com',
-		name: 'Admin',
-		password: 'admin@123',
+		email: process.env.ADMIN_EMAIL,
+		name: process.env.ADMIN_NAME,
+		password: process.env.ADMIN_PASSWORD,
 	}
 
 	await Promise.all(

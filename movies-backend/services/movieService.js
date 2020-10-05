@@ -26,14 +26,25 @@ async function getAllMovie() {
 		const movies = await Movie.find();
 		if (movies && movies.length) {
 			return { movies }
-		}
+		} else throw new CustomError('Movie is not found.', 404)
 	} catch (error) {
 		return { error };
+	}
+}
+
+async function getMovieById(movieId) {
+	try {
+		const movie = await Movie.findById(movieId);
+		if (!movie) throw new CustomError('Movie is not found.', 404);
+		return { movie };
+	} catch (err) {
+		return { err };
 	}
 }
 
 module.exports = {
 	addMovie,
 	updateMovie,
-	getAllMovie
+	getAllMovie,
+	getMovieById
 }

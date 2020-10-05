@@ -90,8 +90,27 @@ async function getAllMovie(req, res) {
 	}
 }
 
+async function getMovieById(req, res) {
+	try {
+		const accessToken = req.headers.authorization;
+		const { error: errorAuth, data } = await authService.verifyToken(
+			accessToken,
+		);
+		if (errorAuth) return res.status(403).send({ error: errorAuth.message });
+
+		const { movieId } = req.params;
+		const { err, movie } = await movieService.getMovieById(movieId);
+		if (err) throw err;
+		return res.send({ results: movie });
+	} catch (error) {
+		res.status(error.statusCode || 500);
+		return res.send({ error: error.message });
+	}
+}
+
 module.exports = {
 	addMovie,
 	updateMovie,
-	getAllMovie
+	getAllMovie,
+	getMovieById
 }

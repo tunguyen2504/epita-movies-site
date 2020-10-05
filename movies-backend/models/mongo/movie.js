@@ -4,10 +4,20 @@ const Counter = require('./counter')
 const movieSchema = new mongoose.Schema(
 	{
 		title: { type: String, required: true },
-		directors: [{ name: String }],
+		directors: [
+			{
+				name: String
+			},
+			{
+				_id: false
+			}
+		],
 		categories: [
 			{
 				name: String
+			},
+			{
+				_id: false
 			}
 		],
 		releaseDate: Date,
