@@ -1,0 +1,89 @@
+<div class="wall">
+
+	<form action="/auth/logout?_method=DELETE" method="GET">
+		<button type="submit" class="btn btn-danger" style="align: left;">Log Out</button>
+	</form>
+
+	<div align="center">
+		<img
+			src="https://i.pinimg.com/originals/85/be/7f/85be7f5766e64a4edcf17a02f9cfa0cd.jpg"
+			style="width: 100%; margin-top: 20px; margin-bottom:20px">
+	</div>
+
+	{{#if message}}
+	<div class="alert {{messageClass}}" role="alert">
+		{{message}}
+	</div>
+	{{else}}
+	{{#if recentMovies}}
+	<div>
+		<h3 class="title">Last viewed</h5>
+		<div class="card-columns" style="column-count: 5;">
+			{{#each recentMovies}}
+			<div style="width: 200; height:500">
+				<div class="card">
+					<a href="/{{this.movie.id}}/movieDetails" class="playButton">
+						<img class="card-img-top" src={{this.movie.thumbnail_url}} alt="Card image
+							cap">
+						<span class="icon"></span>
+					</a>
+					<div class="card-body">
+						<p class="card-text">{{{this.title}}}</p>
+						<footer class="blockquote-footer">
+							<small class="text-muted">
+								watched {{{ formatDateFromNow this.seen_time }}}
+							</small>
+						</footer>
+					</div>
+				</div>
+			</div>
+			{{/each}}
+		</div>
+	</div>
+	{{/if}}
+	<div>
+		<h1 class="title">Our Movies</h1>
+		<div class="card-columns">
+			{{#each movies}}
+			<div class="card">
+				<a href="/{{this.id}}/movieDetails" class="playButton">
+					<img class="card-img-top" src={{this.thumbnail_url}} alt="Card image cap">
+					<span class="icon"></span>
+				</a>
+				<div class="card-body">
+					<p class="card-text">{{{this.title}}} - {{{ formatDateToYear
+						this.release_date }}}</p>
+					<footer class="blockquote-footer">
+						<small class="text-muted">
+							Directors:
+						</small>
+						{{#each this.directors}}
+						<small class="text-muted">
+							{{{ this.name }}},
+						</small>
+						{{/each}}
+					</footer>
+					<footer class="blockquote-footer">
+						<small class="text-muted">
+						</small>
+						{{#each this.categories}}
+						<small class="text-muted">
+							{{{ this.name }}}
+						</small>
+						{{/each}}
+					</footer>
+					<footer class="blockquote-footer">
+						<small class="text-muted">
+							{{#if this.rating}}
+							Rating: {{{ this.rating }}}/10
+							{{else}}
+							Rating: N/A
+							{{/if}}
+						</small>
+					</footer>
+				</div>
+			</div>
+			{{/each}}
+		</div>
+	</div>
+	{{/if}}

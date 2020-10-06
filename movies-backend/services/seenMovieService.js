@@ -47,15 +47,25 @@ async function getRecentWatchedMoviesByUserId(userId) {
 			attributes: ['movieId', 'seenTime'],
 			where: { userId },
 			order: [['seenTime', 'DESC']],
-			raw: true
+			limit: 5,
+			raw: true,
 		});
 		// To reduce concurrent movie in data
-		var results = [];
+		var data = [];
 		recentMovies.map(async recentMovie => {
-			if (!results.some(e => e.movieId === recentMovie.movieId)) {
-				results.push(recentMovie);
-			}
-		})
+			if (!data.some(e => e.movieId === recentMovie.movieId)) {
+				data.push(recentMovie);
+			};
+		});
+		var results = [];
+		await Promise.all(
+			data.map(async recentMovie => {
+				await movieService.getMovieById(recentMovie.movieId).then(movie => {
+					movie.seenTime = recentMovie.seenTime;
+					results.push(movie);
+				});
+			})
+		);
 		return { results };
 	} catch (error) {
 		return { error };

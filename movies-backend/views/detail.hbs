@@ -1,0 +1,80 @@
+<div class="col-50">
+
+	<div align="left">
+		<a href="/" class="btn btn-sm btn-success">Return</a>
+	</div>
+
+
+	<h1 class="title">{{movie.title}}</h1>
+
+	<iframe class="videoPlayer" src="{{movie.trailer_url}}"></iframe>
+
+	<div class="row">
+
+		<div class="col-md-3">
+			<img class="posterDisplay" class="card-img-top" src={{movie.thumbnail_url}}
+				alt="Card image cap">
+		</div>
+
+		<div class="col-md-9">
+			<h5 class="spacing">Title: <span style="font-size: 26">{{movie.title}}</span></h5>
+			<h5 class="spacing">Release Date: {{{formatDateToDDMMYYYY
+				movie.release_date}}}</h5>
+			<h5 class="spacing">{{#if movie.rating}}
+				Rating: {{{ movie.rating }}}/10
+				{{else}}
+				Rating: N/A
+				{{/if}}</h5>
+			{{!-- <h5 class="spacing">Views: {{movie.views}}</h5> --}}
+
+
+			<h5>Rate this Film Below:</h5>
+
+			<form action="/{{movie.id}}/rateMovie" method="POST">
+				<input type="radio" id="r10" value="10" name="star">
+				<label for="star">&#9733;</label>
+
+				<input type="radio" id="r9" value="9" name="star">
+				<label for="star">&#9733;</label>
+
+				<input type="radio" id="r8" value="8" name="star">
+				<label for="star">&#9733;</label>
+
+				<input type="radio" id="r7" value="7" name="star">
+				<label for="star">&#9733;</label>
+
+				<input type="radio" id="r6" value="6" name="star">
+				<label for="star">&#9733;</label>
+
+				<input type="radio" id="r5" value="5" name="star">
+				<label for="star">&#9733;</label>
+
+				<input type="radio" id="r4" value="4" name="star">
+				<label for="star">&#9733;</label>
+
+				<input type="radio" id="r3" value="3" name="star">
+				<label for="star">&#9733;</label>
+
+				<input type="radio" id="r2" value="2" name="star">
+				<label for="star">&#9733;</label>
+
+				<input type="radio" id="r1" value="1" name="star">
+				<label for="star">&#9733;</label>
+
+				<button type="submit" class="btn btn-sm btn-warning" margin-left="20px">Submit</button>
+			</form>
+
+			{{#if message}}
+			<div class="alert {{messageClass}}" role="alert">
+				{{message}}
+			</div>
+			{{/if}}
+
+		</div>
+
+	</div>
+
+
+
+
+</div>

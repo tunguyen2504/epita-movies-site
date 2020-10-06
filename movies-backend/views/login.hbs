@@ -1,0 +1,34 @@
+<div>
+	<h3>Welcome to Home Cinema!</h3>
+</div>
+
+<form action="/login" method="POST">
+	<div class="imgcontainer">
+		<img
+			src="https://images.squarespace-cdn.com/content/v1/52726855e4b0b2696c2a65b9/1470239629352-4ZZ69DLHOOQQIWQDVLJS/ke17ZwdGBToddI8pDm48kEiREASJXjyg0FkDBg-2yS8UqsxRUqqbr1mOJYKfIPR7LoDQ9mXPOjoJoqy81S2I8N_N4V1vUb5AoIIIbLZhVYxCRW4BPu10St3TBAUQYVKc1K8ldZA7K2WotbX7g-T4rwDJL9JhGS5fgJhTOZomK_ZCeT-Z1M3jcJV0yIxIoKKg/Cinema+book+cover"
+			alt="Logo" style="width: auto; max-height: 500px">
+	</div>
+
+	<div class="container">
+		{{#if message}}
+		<div class="alert {{messageClass}}" role="alert">
+			{{message}}
+		</div>
+		{{/if}}
+
+		<label for="email"><b>Email</b></label>
+		<input type="text" placeholder="Enter Username" name="email" id="email"
+			required>
+
+		<label for="password"><b>Password</b></label>
+		<input type="password" placeholder="Enter Password" name="password"
+			id="password" required>
+
+		<button class="loginButton" type="submit">Login</button>
+
+	</div>
+
+	<div class="container" style="background-color:#f1f1f1">
+		<a href="/signup">Not a member? Register Here!</a>
+	</div>
+</form>
