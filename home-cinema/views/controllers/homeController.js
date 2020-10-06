@@ -44,13 +44,14 @@ async function getMovieDetails(req, res) {
 		res.redirect('/login');
 	} else {
 		loginController.verifyToken(authToken).then(userId => {
-			getMovieById(authToken, movieId).then(movie => {
+			getMovieById(authToken, movieId).then(results => {
 				res.render('detail', {
-					movie: movie
+					movie: results.movie,
+					views: results.views
 				});
 			}).catch(err => {
 				if (err.response) {
-					res.redirect('/login');
+					res.redirect('/homepage');
 				}
 			});
 		}).catch(err => {
@@ -106,22 +107,6 @@ function getHomePageData(authToken) {
 
 function getMovieById(authToken, movieId) {
 	return new Promise(async (resolve, reject) => {
-		var movie = {};
-		const options = {
-			method: 'GET',
-			url: `${hostURL}/movies/${movieId}/get`,
-			headers: {
-				authorization: authToken
-			}
-		};
-		await axios(options).then(response => {
-			movie = response.data.results;
-			resolve(movie);
-		}).catch(err => {
-			if (err.response) {
-				reject(err);
-			}
-		});
 		const seenOptions = {
 			method: 'POST',
 			url: `${hostURL}/seenMovie`,
@@ -133,6 +118,21 @@ function getMovieById(authToken, movieId) {
 			}
 		};
 		await axios(seenOptions).then(response => { }).catch(err => {
+			if (err.response) {
+				reject(err);
+			}
+		})
+		const countViewOptions = {
+			method: 'GET',
+			url: `${hostURL}/seenMovie/${movieId}/countViews`,
+			headers: {
+				authorization: authToken
+			}
+		};
+		await axios(countViewOptions).then(response => {
+			const results = response.data.results;
+			resolve(results);
+		 }).catch(err => {
 			if (err.response) {
 				reject(err);
 			}
